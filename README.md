@@ -1,2 +1,2 @@
-# golang_task
+# golang-task
 complete tasks in golang
