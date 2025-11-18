@@ -62,8 +62,8 @@ func GenericsAPIRun(db *gorm.DB) {
 }
 
 func Field(db *gorm.DB) {
-	   // 声明切片变量用于接收查询结果
-    students := []Student{}
+	// 声明切片变量用于接收查询结果
+	students := []Student{}
 	db.Debug().Clauses(clause.OrderBy{
 		Expression: clause.Expr{SQL: "FIELD(id,?)", Vars: []interface{}{[]int{1, 2, 3}}, WithoutParentheses: true},
 	}).Find(&students, []int{3, 2, 1})
@@ -72,14 +72,34 @@ func Field(db *gorm.DB) {
 
 func Run(db *gorm.DB) {
 	db.AutoMigrate(&Student{})
-	studentPtr := &Student{
+
+}
+
+func CreateStudents(db *gorm.DB) {
+	db.AutoMigrate(&Student{})
+	student := Student{
 		Name:  "张三",
 		Age:   20,
 		Grade: "三年级",
 	}
-	result := db.Create(studentPtr)
-	fmt.Println(studentPtr.ID)
+	result := db.Debug().Create(&student)
+	fmt.Println(student.ID)
 	fmt.Println(result.Error)
 	fmt.Println(result.RowsAffected)
+}
 
+func QueryStudents(db *gorm.DB) {
+	students := []Student{}
+	db.Debug().Where("age > ?", "18").Find(&students)
+	fmt.Println(students)
+}
+
+func UpdateGrade(db *gorm.DB) {
+
+	// db.Debug().Model(&Student{}).Where("name = ?", "张三").Update("grade", "四年级")
+	db.Debug().Model(&Student{}).Where("name = ?", "张三").Updates(&Student{Grade: "四年级"})
+}
+
+func DeleteStudents(db *gorm.DB) {
+	db.Debug().Where("age < ?", 15).Delete(&Student{})
 }
